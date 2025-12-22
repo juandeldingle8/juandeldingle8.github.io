@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>windows-media-player.exe</title>
+<link rel="icon" href="winxp.png">
+
+<style>
+body {
+  background: #3a6ea5;
+  font-family: Tahoma;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.player {
+  width: 420px;
+  background: #ece9d8;
+  border: 2px solid #000;
+  box-shadow: 8px 8px 0 #000;
+}
+
+.title {
+  background: linear-gradient(to right, #0a246a, #3a6ea5);
+  color: white;
+  padding: 6px;
+  font-weight: bold;
+}
+
+.screen {
+  background: black;
+  color: lime;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+button {
+  width: 60px;
+  height: 30px;
+  background: #d6d6d6;
+  border: 2px outset #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  border: 2px inset #fff;
+}
+
+.playlist {
+  background: #fff;
+  height: 120px;
+  overflow-y: auto;
+  border-top: 2px solid #000;
+}
+
+.song {
+  padding: 6px;
+  cursor: pointer;
+}
+
+.song:hover {
+  background: #316ac5;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="player">
+  <div class="title">Windows Media Player</div>
+
+  <div class="screen" id="nowPlaying">
+    Ready.
+  </div>
+
+  <div class="controls">
+    <button onclick="prev()">⏮</button>
+    <button onclick="playPause()">▶ / ⏸</button>
+    <button onclick="next()">⏭</button>
+  </div>
+
+  <div class="playlist">
+    <div class="song" onclick="playSong(0)">🎵 Song One</div>
+    <div class="song" onclick="playSong(1)">🎵 Song Two</div>
+    <div class="song" onclick="playSong(2)">🎵 Song Three</div>
+  </div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+const songs = [
+  "music/song1.mp3",
+  "music/song2.mp3",
+  "music/song3.mp3"
+];
+
+let current = 0;
+const audio = document.getElementById("audio");
+const display = document.getElementById("nowPlaying");
+
+function playSong(index) {
+  current = index;
+  audio.src = songs[current];
+  audio.play();
+  display.textContent = "Now Playing: Song " + (current + 1);
+}
+
+function playPause() {
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+}
+
+function next() {
+  current = (current + 1) % songs.length;
+  playSong(current);
+}
+
+function prev() {
+  current = (current - 1 + songs.length) % songs.length;
+  playSong(current);
+}
+</script>
+
+</body>
+</html>
