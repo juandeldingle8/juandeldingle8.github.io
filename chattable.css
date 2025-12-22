@@ -1,0 +1,32 @@
+/* MAIN CHAT BACKGROUND */
+.chattable {
+  background: #0b0b0b !important;
+  color: #00ffcc !important;
+  font-family: Tahoma, Verdana, sans-serif !important;
+}
+
+/* MESSAGE BUBBLES */
+.chattable-message {
+  background: #111 !important;
+  border: 1px solid #00ffcc !important;
+}
+
+/* USERNAME */
+.chattable-username {
+  color: #00ffff !important;
+}
+
+/* INPUT BOX */
+.chattable-input {
+  background: black !important;
+  color: #00ffcc !important;
+  border-top: 1px solid #00ffcc !important;
+}
+
+/* SCROLLBAR (CHROME) */
+.chattable ::-webkit-scrollbar {
+  width: 8px;
+}
+.chattable ::-webkit-scrollbar-thumb {
+  background: #00ffcc;
+}
