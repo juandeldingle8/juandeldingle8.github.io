@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>deldingle.exe</title>
+
+<style>
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: Tahoma, Verdana, sans-serif;
+  user-select: none;
+}
+
+/* ===== BODY ===== */
+body {
+  margin: 0;
+  height: 100vh;
+  background: url("https://i.imgur.com/7bKQ7YF.jpg") center/cover no-repeat;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* ===== BOOT SCREEN ===== */
+#boot {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#boot img {
+  width: 300px;
+}
+
+#boot p {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* ===== DESKTOP ICONS ===== */
+.icon {
+  width: 72px;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  margin: 12px;
+  cursor: pointer;
+}
+
+.icon img {
+  width: 48px;
+}
+
+#desktop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* ===== TASKBAR ===== */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  background: linear-gradient(#245edb, #3a6ea5);
+  display: flex;
+  align-items: center;
+}
+
+#start {
+  background: linear-gradient(#3b7c3b, #2e5f2e);
+  color: white;
+  padding: 6px 14px;
+  font-weight: bold;
+  border-right: 1px solid black;
+  cursor: pointer;
+}
+
+/* ===== WINDOWS ===== */
+.window {
+  position: absolute;
+  width: 420px;
+  background: #ece9d8;
+  border: 2px solid black;
+  box-shadow: 6px 6px black;
+}
+
+.title-bar {
+  background: linear-gradient(to right, #0a246a, #3a6ea5);
+  color: white;
+  padding: 4px;
+  display: flex;
+  justify-content: space-between;
+  cursor: move;
+}
+
+.content {
+  background: black;
+  color: #00ffcc;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* ===== GLITCH TEXT ===== */
+.glitch {
+  animation: glitch 1.5s infinite;
+}
+
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red; }
+  50% { text-shadow: -2px 0 cyan; }
+  100% { text-shadow: 0 0 transparent; }
+}
+
+/* ===== BSOD ===== */
+#bsod {
+  position: fixed;
+  inset: 0;
+  background: #0000aa;
+  color: white;
+  font-family: Consolas, monospace;
+  padding: 40px;
+  display: none;
+  z-index: 10000;
+}
+
+/* ===== SCANLINES ===== */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.03),
+    rgba(255,255,255,0.03) 1px,
+    transparent 2px
+  );
+}
+</style>
+</head>
+
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <img src="https://i.imgur.com/WJ9xN0K.png">
+  <p>Starting Windows XP...</p>
+</div>
+
+<!-- DESKTOP -->
+<div id="desktop" style="display:none">
+  <div class="icon" onclick="openAbout()">
+    <img src="https://i.imgur.com/OXQZ1xK.png">
+    <div>about_me.exe</div>
+  </div>
+
+  <div class="icon" onclick="openSecret()">
+    <img src="https://i.imgur.com/qJY5KXH.png">
+    <div>???</div>
+  </div>
+
+  <div class="icon" onclick="triggerBSOD()">
+    <img src="https://i.imgur.com/9y6Gm3F.png">
+    <div>do_not_open</div>
+  </div>
+</div>
+
+<!-- ABOUT WINDOW -->
+<div class="window" id="about" style="display:none; top:80px; left:120px;">
+  <div class="title-bar">
+    <span>deldingle.exe</span>
+    <span onclick="this.parentElement.parentElement.style.display='none'">X</span>
+  </div>
+  <div class="content">
+    <h2 class="glitch">hello. i am deldingle.</h2>
+    <p>this desktop is unstable.</p>
+    <p>i like:</p>
+    <ul>
+      <li>weirdcore</li>
+      <li>windows xp</li>
+      <li>broken things</li>
+      <li>nostalgia</li>
+    </ul>
+    <p class="glitch">this is not finished.</p>
+  </div>
+</div>
+
+<!-- SECRET WINDOW -->
+<div class="window" id="secret" style="display:none; top:140px; left:200px;">
+  <div class="title-bar">
+    <span>memory_fragment</span>
+    <span onclick="this.parentElement.parentElement.style.display='none'">X</span>
+  </div>
+  <div class="content">
+    <p>you were not supposed to find this.</p>
+    <p class="glitch">but you always do.</p>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+  <div id="start">start</div>
+</div>
+
+<!-- BSOD -->
+<div id="bsod">
+  <h1>A problem has been detected and Windows has been shut down</h1>
+  <p>USER_DELDINGLE_EXCEPTION</p>
+  <p>Press any key to restart.</p>
+</div>
+
+<!-- AUDIO -->
+<audio id="hum" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_45c2e0b6d7.mp3">
+</audio>
+
+<script>
+/* BOOT SEQUENCE */
+setTimeout(() => {
+  document.getElementById("boot").style.display = "none";
+  document.getElementById("desktop").style.display = "flex";
+  document.getElementById("hum").play();
+}, 3000);
+
+/* WINDOW OPENERS */
+function openAbout() {
+  document.getElementById("about").style.display = "block";
+}
+
+function openSecret() {
+  document.getElementById("secret").style.display = "block";
+}
+
+/* BSOD */
+function triggerBSOD() {
+  document.getElementById("bsod").style.display = "block";
+  document.getElementById("hum").pause();
+}
+
+document.addEventListener("keydown", () => location.reload());
+
+/* DRAG WINDOWS */
+document.querySelectorAll(".window").forEach(win => {
+  const bar = win.querySelector(".title-bar");
+  let dragging = false, ox, oy;
+
+  bar.addEventListener("mousedown", e => {
+    dragging = true;
+    ox = e.offsetX;
+    oy = e.offsetY;
+  });
+
+  document.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    win.style.left = e.pageX - ox + "px";
+    win.style.top = e.pageY - oy + "px";
+  });
+
+  document.addEventListener("mouseup", () => dragging = false);
+});
+</script>
+
+</body>
+</html>
