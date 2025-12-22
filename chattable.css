@@ -1,32 +1,70 @@
-/* MAIN CHAT BACKGROUND */
-.chattable {
-  background: #0b0b0b !important;
-  color: #00ffcc !important;
+/* ===== WINDOWS XP MESSENGER CHAT ===== */
+
+:root {
+  --xp-blue: #0a246a;
+  --xp-light: #3a6ea5;
+  --xp-bg: #ece9d8;
+  --xp-border: #000;
+}
+
+/* Chat container */
+#chattable,
+.chattable-container {
+  background: var(--xp-bg) !important;
+  border: 2px solid var(--xp-border) !important;
   font-family: Tahoma, Verdana, sans-serif !important;
 }
 
-/* MESSAGE BUBBLES */
+/* Header */
+.chattable-header {
+  background: linear-gradient(to right, var(--xp-blue), var(--xp-light)) !important;
+  color: white !important;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+}
+
+/* Message area */
+.chattable-messages {
+  background: #ffffff !important;
+  padding: 6px !important;
+}
+
+/* Individual messages */
 .chattable-message {
-  background: #111 !important;
-  border: 1px solid #00ffcc !important;
+  background: #f5f5f5 !important;
+  border: 1px solid #999 !important;
+  margin: 4px 0 !important;
+  padding: 4px 6px !important;
+  font-size: 12px;
 }
 
-/* USERNAME */
+/* Username */
 .chattable-username {
-  color: #00ffff !important;
+  color: #003399 !important;
+  font-weight: bold;
 }
 
-/* INPUT BOX */
+/* Input bar */
 .chattable-input {
-  background: black !important;
-  color: #00ffcc !important;
-  border-top: 1px solid #00ffcc !important;
+  background: var(--xp-bg) !important;
+  border-top: 1px solid #999;
 }
 
-/* SCROLLBAR (CHROME) */
-.chattable ::-webkit-scrollbar {
-  width: 8px;
+/* Text input */
+.chattable-input textarea {
+  font-family: Tahoma, Verdana, sans-serif !important;
+  font-size: 12px !important;
+  border: 2px inset #999 !important;
 }
-.chattable ::-webkit-scrollbar-thumb {
-  background: #00ffcc;
+
+/* Buttons */
+.chattable-button {
+  background: linear-gradient(#ffffff, #dcdcdc) !important;
+  border: 1px solid #000 !important;
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.chattable-button:hover {
+  background: #cce6ff !important;
 }
