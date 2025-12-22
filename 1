@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>deldingle - Windows XP</title>
+
+<style>
+/* ===== GLOBAL ===== */
+* {
+  box-sizing: border-box;
+  font-family: Tahoma, Verdana, sans-serif;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #3a6ea5;
+}
+
+/* ===== XP BOOT SCREEN ===== */
+#boot {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#boot img {
+  width: 300px;
+  margin-bottom: 30px;
+}
+
+.loading {
+  width: 200px;
+  height: 6px;
+  background: #222;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 100%;
+  background: white;
+  animation: load 1.2s infinite linear;
+}
+
+@keyframes load {
+  from { transform: translateX(-40px); }
+  to { transform: translateX(200px); }
+}
+
+/* ===== DESKTOP ===== */
+#desktop {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#3a6ea5, #245edb);
+  position: relative;
+}
+
+/* ===== ICONS ===== */
+.icon {
+  width: 80px;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  margin: 20px;
+  cursor: pointer;
+}
+
+.icon img {
+  width: 48px;
+  display: block;
+  margin: auto;
+}
+
+/* ===== XP WINDOW ===== */
+.window {
+  width: 420px;
+  position: absolute;
+  top: 120px;
+  left: 140px;
+  border: 2px solid #000;
+  box-shadow: 6px 6px 0 #000;
+  background: #ece9d8;
+}
+
+.title-bar {
+  background: linear-gradient(to right, #0a246a, #3a6ea5);
+  color: white;
+  padding: 6px;
+  display: flex;
+  justify-content: space-between;
+  cursor: move;
+}
+
+.buttons div {
+  width: 16px;
+  height: 16px;
+  background: #d6d6d6;
+  border: 1px solid black;
+  text-align: center;
+  font-size: 12px;
+}
+
+.content {
+  background: #111;
+  color: #00ffcc;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* ===== WEIRDCORE ===== */
+.glitch {
+  animation: glitch 1.4s infinite;
+}
+
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red; }
+  50% { text-shadow: -2px 0 cyan; }
+  100% { text-shadow: none; }
+}
+
+.secret {
+  color: #00ffcc;
+}
+
+.secret:hover::after {
+  content: " you were not meant to see this ";
+  color: red;
+}
+
+/* ===== BSOD ===== */
+#bsod {
+  position: fixed;
+  inset: 0;
+  background: #0000aa;
+  color: white;
+  font-family: monospace;
+  padding: 40px;
+  display: none;
+  z-index: 99999;
+}
+
+/* ===== TASKBAR ===== */
+#taskbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 34px;
+  background: linear-gradient(#245edb, #1c3faa);
+  display: flex;
+  align-items: center;
+}
+
+#start {
+  background: linear-gradient(#3dbf3d, #1f7a1f);
+  color: white;
+  padding: 4px 14px;
+  margin-left: 6px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+/* ===== CRT ===== */
+body::after {
+  content:"";
+  position: fixed;
+  inset:0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.04),
+    rgba(255,255,255,0.04) 1px,
+    transparent 2px
+  );
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Windows_XP_logo.svg">
+  <div class="loading"></div>
+</div>
+
+<!-- BSOD -->
+<div id="bsod">
+  A problem has been detected and Windows has been shut down to prevent damage.<br><br>
+  USER: DELDINGLE<br>
+  ERROR: REALITY_NOT_FOUND<br><br>
+  Press any key to restart.
+</div>
+
+<!-- DESKTOP -->
+<div id="desktop">
+
+  <!-- ICONS -->
+  <div class="icon" onclick="openAbout()">
+    <img src="https://icons.iconarchive.com/icons/dtafalonso/win-xp/256/User-icon.png">
+    deldingle
+  </div>
+
+  <div class="icon" onclick="triggerBSOD()">
+    <img src="https://icons.iconarchive.com/icons/dtafalonso/win-xp/256/Error-icon.png">
+    do not open
+  </div>
+
+  <!-- WINDOW -->
+  <div class="window" id="about">
+    <div class="title-bar">
+      deldingle.exe
+      <div class="buttons">
+        <div>X</div>
+      </div>
+    </div>
+    <div class="content">
+      <h2 class="glitch">hello. i am deldingle.</h2>
+
+      <p>
+        this system feels <span class="secret">familiar</span>.
+      </p>
+
+      <ul>
+        <li>🖥 windows xp nostalgia</li>
+        <li>🌀 weirdcore aesthetics</li>
+        <li>📁 abandoned software</li>
+        <li>❓ corrupted memories</li>
+      </ul>
+
+      <p class="secret">
+        the desktop is watching you.
+      </p>
+    </div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <div id="start">start</div>
+  </div>
+
+</div>
+
+<audio id="hum" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_1c1a67a89f.mp3">
+</audio>
+
+<script>
+/* BOOT SEQUENCE */
+setTimeout(() => {
+  document.getElementById("boot").style.display = "none";
+  document.getElementById("desktop").style.display = "block";
+  document.getElementById("hum").play();
+}, 3000);
+
+/* DRAG WINDOWS */
+const win = document.getElementById("about");
+const bar = win.querySelector(".title-bar");
+let drag = false, x, y;
+
+bar.onmousedown = e => {
+  drag = true;
+  x = e.clientX - win.offsetLeft;
+  y = e.clientY - win.offsetTop;
+};
+
+document.onmouseup = () => drag = false;
+document.onmousemove = e => {
+  if(drag){
+    win.style.left = e.clientX - x + "px";
+    win.style.top = e.clientY - y + "px";
+  }
+};
+
+/* FUNCTIONS */
+function openAbout(){
+  win.style.display = "block";
+}
+
+function triggerBSOD(){
+  document.getElementById("bsod").style.display = "block";
+  document.getElementById("hum").pause();
+}
+
+document.addEventListener("keydown", () => {
+  if(document.getElementById("bsod").style.display === "block"){
+    location.reload();
+  }
+});
+</script>
+
+</body>
+</html>
