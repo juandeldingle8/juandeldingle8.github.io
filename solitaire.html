@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Solitaire</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/en/5/5f/Windows_XP_logo.svg">
+<style>
+body {
+  margin: 0;
+  background: #0a7a3d;
+  font-family: Tahoma, sans-serif;
+  user-select: none;
+}
+
+#game {
+  padding: 20px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pile {
+  width: 80px;
+  height: 120px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  position: relative;
+}
+
+.card {
+  width: 80px;
+  height: 120px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #000;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.red { color: red; }
+.black { color: black; }
+
+.face-down {
+  background: linear-gradient(45deg, #004, #00a);
+  border: 1px solid #000;
+  cursor: default;
+}
+</style>
+</head>
+<body>
+
+<div id="game">
+  <div class="row">
+    <div class="pile" id="stock"></div>
+    <div class="pile" id="waste"></div>
+    <div style="width:40px"></div>
+    <div class="pile foundation"></div>
+    <div class="pile foundation"></div>
+    <div class="pile foundation"></div>
+    <div class="pile foundation"></div>
+  </div>
+
+  <div class="row" id="tableau"></div>
+</div>
+
+<script>
+const suits = ["♠","♥","♦","♣"];
+const colors = { "♠":"black","♣":"black","♥":"red","♦":"red" };
+const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+
+let stock = [];
+let waste = [];
+let foundations = [[],[],[],[]];
+let tableau = [[],[],[],[],[],[],[]];
+
+let selectedCard = null;
+
+function createDeck() {
+  let deck = [];
+  for (let s of suits)
+    for (let v of values)
+      deck.push({suit:s,value:v,faceUp:false});
+  return deck.sort(() => Math.random() - 0.5);
+}
+
+function deal() {
+  let deck = createDeck();
+
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j <= i; j++) {
+      let card = deck.pop();
+      if (j === i) card.faceUp = true;
+      tableau[i].push(card);
+    }
+  }
+
+  stock = deck;
+}
+
+function render() {
+  document.querySelectorAll(".pile").forEach(p => p.innerHTML = "");
+
+  // Stock
+  const stockDiv = document.getElementById("stock");
+  if (stock.length) {
+    const c = document.createElement("div");
+    c.className = "card face-down";
+    c.onclick = drawCard;
+    stockDiv.appendChild(c);
+  }
+
+  // Waste
+  const wasteDiv = document.getElementById("waste");
+  if (waste.length) wasteDiv.appendChild(renderCard(waste[waste.length-1], waste));
+
+  // Foundations
+  document.querySelectorAll(".foundation").forEach((f,i)=>{
+    if (foundations[i].length)
+      f.appendChild(renderCard(foundations[i][foundations[i].length-1], foundations[i]));
+  });
+
+  // Tableau
+  const t = document.getElementById("tableau");
+  t.innerHTML = "";
+  tableau.forEach((pile,i)=>{
+    const p = document.createElement("div");
+    p.className = "pile";
+    pile.forEach((card,j)=>{
+      const c = renderCard(card, pile);
+      c.style.top = (j * 24) + "px";
+      p.appendChild(c);
+    });
+    t.appendChild(p);
+  });
+}
+
+function renderCard(card, pile) {
+  const div = document.createElement("div");
+  div.className = "card " + (card.faceUp ? colors[card.suit] : "face-down");
+  if (card.faceUp) div.textContent = card.value + card.suit;
+  div.onclick = () => selectCard(card, pile);
+  return div;
+}
+
+function drawCard() {
+  if (!stock.length) {
+    stock = waste.map(c => ({...c,faceUp:false}));
+    waste = [];
+  } else {
+    const c = stock.pop();
+    c.faceUp = true;
+    waste.push(c);
+  }
+  render();
+}
+
+function selectCard(card, pile) {
+  if (!card.faceUp) return;
+
+  if (!selectedCard) {
+    selectedCard = {card, pile};
+  } else {
+    tryMove(card, pile);
+    selectedCard = null;
+  }
+}
+
+function tryMove(card, pile) {
+  const s = selectedCard.card;
+  const from = selectedCard.pile;
+
+  if (pile === from) return;
+
+  if (pile === waste || pile === stock) return;
+
+  if (document.querySelectorAll(".foundation").length) {
+    if (foundations.includes(pile)) {
+      if (
+        (pile.length === 0 && s.value === "A") ||
+        (pile.length &&
+         values.indexOf(s.value) === values.indexOf(pile[pile.length-1].value)+1 &&
+         s.suit === pile[pile.length-1].suit)
+      ) {
+        move(s, from, pile);
+      }
+    }
+  }
+
+  if (tableau.includes(pile)) {
+    if (
+      pile.length === 0 && s.value === "K" ||
+      pile.length &&
+      colors[s.suit] !== colors[pile[pile.length-1].suit] &&
+      values.indexOf(s.value) === values.indexOf(pile[pile.length-1].value)-1
+    ) {
+      move(s, from, pile);
+    }
+  }
+}
+
+function move(card, from, to) {
+  from.splice(from.indexOf(card),1);
+  to.push(card);
+  if (from.length && !from[from.length-1].faceUp)
+    from[from.length-1].faceUp = true;
+  render();
+}
+
+deal();
+render();
+</script>
+
+</body>
+</html>
