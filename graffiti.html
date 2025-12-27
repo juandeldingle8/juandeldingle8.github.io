@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graffiti Social</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rubik:wght@300;400;600&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Rubik', sans-serif;
+      background: radial-gradient(circle at top, #111 0%, #000 60%);
+      color: #f5f5f5;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #ff0055, #00ffaa);
+      color: black;
+      font-family: 'Permanent Marker', cursive;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 #fff;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .post-box {
+      background: #111;
+      border: 3px dashed #ff0055;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #00ffaa;
+      padding: 10px;
+      font-family: monospace;
+      resize: vertical;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      background: #000;
+      color: #fff;
+      border: 2px solid #ff0055;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-family: 'Permanent Marker', cursive;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, #ff0055, #ffaa00);
+      border: none;
+      cursor: pointer;
+    }
+
+    .feed .post {
+      background: #0b0b0b;
+      border-left: 6px solid #00ffaa;
+      margin-bottom: 20px;
+      padding: 15px;
+      animation: pop 0.3s ease;
+    }
+
+    .post h4 {
+      margin: 0 0 5px;
+      color: #ff0055;
+      font-family: 'Permanent Marker', cursive;
+    }
+
+    .post p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      opacity: 0.6;
+      margin-top: 8px;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <header>GRAFFITI SOCIAL</header>
+
+  <main>
+    <div class="post-box">
+      <h3>Tag the Wall</h3>
+      <textarea id="content" placeholder="Spray your thoughts..."></textarea>
+      <input id="username" type="text" placeholder="Your tag name" />
+      <button onclick="addPost()">SPRAY</button>
+    </div>
+
+    <div class="feed" id="feed"></div>
+  </main>
+
+  <footer>
+    Local graffiti wall • Posts saved in your browser
+  </footer>
+
+  <script>
+    const feed = document.getElementById('feed');
+
+    function loadPosts() {
+      const posts = JSON.parse(localStorage.getItem('graffiti-posts') || '[]');
+      feed.innerHTML = '';
+      posts.reverse().forEach(p => renderPost(p));
+    }
+
+    function addPost() {
+      const content = document.getElementById('content').value.trim();
+      const username = document.getElementById('username').value.trim() || 'Anonymous';
+
+      if (!content) return alert('You gotta write something.');
+
+      const post = {
+        user: username,
+        text: content,
+        time: new Date().toLocaleString()
+      };
+
+      const posts = JSON.parse(localStorage.getItem('graffiti-posts') || '[]');
+      posts.push(post);
+      localStorage.setItem('graffiti-posts', JSON.stringify(posts));
+
+      document.getElementById('content').value = '';
+      renderPost(post, true);
+    }
+
+    function renderPost(post, toTop = false) {
+      const div = document.createElement('div');
+      div.className = 'post';
+      div.innerHTML = `
+        <h4>@${post.user}</h4>
+        <p>${escapeHTML(post.text)}</p>
+        <div class="timestamp">${post.time}</div>
+      `;
+
+      if (toTop && feed.firstChild) feed.prepend(div);
+      else feed.appendChild(div);
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
