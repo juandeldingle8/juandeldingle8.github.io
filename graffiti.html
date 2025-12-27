@@ -3,28 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Graffiti Social</title>
+  <title>Spray — Social</title>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Rubik:wght@300;400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: 'Rubik', sans-serif;
-      background: radial-gradient(circle at top, #111 0%, #000 60%);
-      color: #f5f5f5;
+      font-family: 'Inter', sans-serif;
+      background: #0b0b0f;
+      color: #f2f2f2;
     }
 
     header {
-      padding: 20px;
-      text-align: center;
-      background: linear-gradient(135deg, #ff0055, #00ffaa);
-      color: black;
-      font-family: 'Permanent Marker', cursive;
-      font-size: 2.5rem;
-      letter-spacing: 2px;
-      text-shadow: 2px 2px 0 #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #ff0055, #7f00ff);
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    header span {
+      font-size: 1.4rem;
     }
 
     main {
@@ -33,148 +43,190 @@
       padding: 20px;
     }
 
-    .post-box {
-      background: #111;
-      border: 3px dashed #ff0055;
-      padding: 15px;
-      margin-bottom: 30px;
+    .auth, .post-box {
+      background: #13131a;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
     }
 
-    textarea {
-      width: 100%;
-      min-height: 80px;
-      background: #000;
-      color: #0f0;
-      border: 2px solid #00ffaa;
-      padding: 10px;
-      font-family: monospace;
-      resize: vertical;
-    }
-
-    input[type="text"] {
+    input, textarea {
       width: 100%;
       margin-top: 10px;
-      padding: 8px;
-      background: #000;
-      color: #fff;
-      border: 2px solid #ff0055;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #1c1c26;
+      color: white;
     }
 
     button {
       margin-top: 10px;
-      padding: 10px 20px;
-      font-family: 'Permanent Marker', cursive;
-      font-size: 1.1rem;
-      background: linear-gradient(135deg, #ff0055, #ffaa00);
+      padding: 10px 16px;
       border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff0055, #ff9900);
+      font-weight: 700;
       cursor: pointer;
     }
 
     .feed .post {
-      background: #0b0b0b;
-      border-left: 6px solid #00ffaa;
+      background: #13131a;
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 20px;
-      padding: 15px;
-      animation: pop 0.3s ease;
     }
 
-    .post h4 {
-      margin: 0 0 5px;
-      color: #ff0055;
-      font-family: 'Permanent Marker', cursive;
+    .post img {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 10px;
     }
 
-    .post p {
-      margin: 0;
-      white-space: pre-wrap;
+    .post .user {
+      font-weight: 700;
     }
 
-    .timestamp {
-      font-size: 0.75rem;
-      opacity: 0.6;
-      margin-top: 8px;
+    .likes {
+      margin-top: 10px;
+      cursor: pointer;
+      opacity: 0.8;
     }
 
-    @keyframes pop {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    .likes:hover { opacity: 1; }
 
     footer {
       text-align: center;
+      opacity: 0.5;
       padding: 20px;
       font-size: 0.8rem;
-      opacity: 0.6;
     }
   </style>
 </head>
 <body>
-  <header>GRAFFITI SOCIAL</header>
 
-  <main>
-    <div class="post-box">
-      <h3>Tag the Wall</h3>
-      <textarea id="content" placeholder="Spray your thoughts..."></textarea>
-      <input id="username" type="text" placeholder="Your tag name" />
-      <button onclick="addPost()">SPRAY</button>
-    </div>
+<header>
+  <span>SPRAY</span>
+  <div id="userStatus">Not signed in</div>
+</header>
 
-    <div class="feed" id="feed"></div>
-  </main>
+<main>
 
-  <footer>
-    Local graffiti wall • Posts saved in your browser
-  </footer>
+  <div class="auth" id="authBox">
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+  </div>
 
-  <script>
-    const feed = document.getElementById('feed');
+  <div class="post-box" id="postBox" style="display:none">
+    <textarea id="postText" placeholder="What's on your mind?"></textarea>
+    <input type="file" id="imageInput" accept="image/*" />
+    <button onclick="createPost()">Post</button>
+  </div>
 
-    function loadPosts() {
-      const posts = JSON.parse(localStorage.getItem('graffiti-posts') || '[]');
+  <div class="feed" id="feed"></div>
+
+</main>
+
+<footer>Global posts • Moderated • Hosted on GitHub Pages</footer>
+
+<script>
+  // 🔥 REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "ID",
+    appId: "APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  auth.onAuthStateChanged(user => {
+    document.getElementById('authBox').style.display = user ? 'none' : 'block';
+    document.getElementById('postBox').style.display = user ? 'block' : 'none';
+    document.getElementById('userStatus').innerText = user ? user.email : 'Not signed in';
+    if (user) loadPosts();
+  });
+
+  function signUp() {
+    auth.createUserWithEmailAndPassword(email.value, password.value);
+  }
+
+  function signIn() {
+    auth.signInWithEmailAndPassword(email.value, password.value);
+  }
+
+  async function createPost() {
+    const text = postText.value.trim();
+    if (!text) return;
+
+    let imageUrl = null;
+    const file = imageInput.files[0];
+
+    if (file) {
+      const ref = storage.ref('posts/' + Date.now() + '_' + file.name);
+      await ref.put(file);
+      imageUrl = await ref.getDownloadURL();
+    }
+
+    await db.collection('posts').add({
+      uid: auth.currentUser.uid,
+      user: auth.currentUser.email,
+      text,
+      imageUrl,
+      likes: [],
+      created: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    postText.value = '';
+    imageInput.value = '';
+  }
+
+  function loadPosts() {
+    db.collection('posts').orderBy('created', 'desc').onSnapshot(snap => {
       feed.innerHTML = '';
-      posts.reverse().forEach(p => renderPost(p));
-    }
+      snap.forEach(doc => renderPost(doc.id, doc.data()));
+    });
+  }
 
-    function addPost() {
-      const content = document.getElementById('content').value.trim();
-      const username = document.getElementById('username').value.trim() || 'Anonymous';
+  function renderPost(id, post) {
+    const div = document.createElement('div');
+    div.className = 'post';
 
-      if (!content) return alert('You gotta write something.');
+    const liked = post.likes.includes(auth.currentUser.uid);
 
-      const post = {
-        user: username,
-        text: content,
-        time: new Date().toLocaleString()
-      };
+    div.innerHTML = `
+      <div class="user">${post.user}</div>
+      <div>${post.text}</div>
+      ${post.imageUrl ? `<img src="${post.imageUrl}" />` : ''}
+      <div class="likes" onclick="toggleLike('${id}')">
+        ❤️ ${post.likes.length} ${liked ? '(liked)' : ''}
+      </div>
+    `;
 
-      const posts = JSON.parse(localStorage.getItem('graffiti-posts') || '[]');
-      posts.push(post);
-      localStorage.setItem('graffiti-posts', JSON.stringify(posts));
+    feed.appendChild(div);
+  }
 
-      document.getElementById('content').value = '';
-      renderPost(post, true);
-    }
+  function toggleLike(id) {
+    const ref = db.collection('posts').doc(id);
+    ref.get().then(doc => {
+      const likes = doc.data().likes || [];
+      const uid = auth.currentUser.uid;
+      ref.update({
+        likes: likes.includes(uid)
+          ? likes.filter(l => l !== uid)
+          : [...likes, uid]
+      });
+    });
+  }
+</script>
 
-    function renderPost(post, toTop = false) {
-      const div = document.createElement('div');
-      div.className = 'post';
-      div.innerHTML = `
-        <h4>@${post.user}</h4>
-        <p>${escapeHTML(post.text)}</p>
-        <div class="timestamp">${post.time}</div>
-      `;
-
-      if (toTop && feed.firstChild) feed.prepend(div);
-      else feed.appendChild(div);
-    }
-
-    function escapeHTML(str) {
-      return str.replace(/[&<>"']/g, m => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[m]));
-    }
-
-    loadPosts();
-  </script>
 </body>
 </html>
